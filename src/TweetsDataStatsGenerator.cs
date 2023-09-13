@@ -29,6 +29,8 @@ namespace CodeScreen.Assessments.TweetsApi
         {
             var tweets = TweetsApiService.GetTweets(userName);
 
+            if(!tweets.Any()) return 0;
+
             tweets.ForEach(tweet => tweet.CreatedAtDay = tweet.CreatedAt.Date);
 
             var higestNumberTweets = tweets.GroupBy(tweet => tweet.CreatedAtDay)
@@ -49,8 +51,15 @@ namespace CodeScreen.Assessments.TweetsApi
         */
         public string GetLongestTweet(string userName)
         {
-            //TODO Implement
-            throw new NotImplementedException();
+            var tweets = TweetsApiService.GetTweets(userName);
+
+            if (!tweets.Any()) return null;
+
+            tweets = tweets.OrderByDescending(tweet => tweet.Text.Length).ToList();
+
+            var id = tweets.First().Id;
+
+            return id;
         }
 
         /**
