@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,8 +92,27 @@ namespace CodeScreen.Assessments.TweetsApi
         */
         public string GetMostPopularHashTag(string userName)
         {
-            //TODO Implement
-            throw new NotImplementedException();
+            var tweets = TweetsApiService.GetTweets(userName);
+            List<string> hashtagList = new List<string>();
+
+            if (!tweets.Any()) return null;
+
+            var messageWithHashtagsList = tweets.Where(tweet => tweet.Text.Contains('#')).ToList();
+            messageWithHashtagsList.ForEach(message => 
+            {
+                var stringArr = message.Text.Split(' ');
+                foreach (var item in stringArr)
+                {
+                    if(item.Contains('#'))
+                        hashtagList.Add(item);
+                }
+            });
+
+            var repeatedHashatag = hashtagList.GroupBy(hashtag => hashtag)
+                .OrderByDescending(grp => grp.Count())
+                .First().First();
+
+            return repeatedHashatag;
         }
 
     }
