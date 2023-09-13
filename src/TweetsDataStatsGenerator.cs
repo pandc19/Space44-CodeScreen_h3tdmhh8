@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 /**
  * Generates various statistics about the tweets data set returned by the given TweetsApiService instance.
@@ -9,7 +11,8 @@ namespace CodeScreen.Assessments.TweetsApi
     {
         private readonly TweetsApiService TweetsApiService;
 
-        public TweetDataStatsGenerator(TweetsApiService tweetsApiService) {
+        public TweetDataStatsGenerator(TweetsApiService tweetsApiService)
+        {
             TweetsApiService = tweetsApiService;
         }
 
@@ -22,9 +25,17 @@ namespace CodeScreen.Assessments.TweetsApi
          * @param userName the name of the user
          * @return the highest number of tweets that were created on a any given day by the given user
         */
-        public int GetMostTweetsForAnyDay(string userName) {
-            //TODO Implement
-            throw new NotImplementedException();
+        public int GetMostTweetsForAnyDay(string userName)
+        {
+            var tweets = TweetsApiService.GetTweets(userName);
+
+            tweets.ForEach(tweet => tweet.CreatedAtDay = tweet.CreatedAt.Date);
+
+            var higestNumberTweets = tweets.GroupBy(tweet => tweet.CreatedAtDay)
+                .OrderByDescending(grp => grp.Count())
+                .First().Count();
+
+            return higestNumberTweets;
         }
 
         /**
@@ -36,7 +47,8 @@ namespace CodeScreen.Assessments.TweetsApi
          * @param userName the name of the user
          * @return the ID of longest tweet for the given user
         */
-        public string GetLongestTweet(string userName) {
+        public string GetLongestTweet(string userName)
+        {
             //TODO Implement
             throw new NotImplementedException();
         }
@@ -51,7 +63,8 @@ namespace CodeScreen.Assessments.TweetsApi
          * @param userName the name of the user
          * @return the most number of days between tweets by the given user
         */
-        public int FindMostDaysBetweenTweets(string userName) {
+        public int FindMostDaysBetweenTweets(string userName)
+        {
             //TODO Implement
             throw new NotImplementedException();
         }
@@ -66,7 +79,8 @@ namespace CodeScreen.Assessments.TweetsApi
          * @param userName the name of the user
          * @return the most popular hash tag tweeted by the given user.
         */
-        public string GetMostPopularHashTag(string userName) {
+        public string GetMostPopularHashTag(string userName)
+        {
             //TODO Implement
             throw new NotImplementedException();
         }
