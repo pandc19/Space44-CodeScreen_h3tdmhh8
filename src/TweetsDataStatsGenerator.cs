@@ -1,8 +1,5 @@
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 /**
  * Generates various statistics about the tweets data set returned by the given TweetsApiService instance.
@@ -31,7 +28,7 @@ namespace CodeScreen.Assessments.TweetsApi
         {
             var tweets = TweetsApiService.GetTweets(userName);
 
-            if(!tweets.Any()) return 0;
+            if (!tweets.Any()) return 0;
 
             tweets.ForEach(tweet => tweet.CreatedAtDay = tweet.CreatedAt.Date);
 
@@ -76,8 +73,21 @@ namespace CodeScreen.Assessments.TweetsApi
         */
         public int FindMostDaysBetweenTweets(string userName)
         {
-            //TODO Implement
-            throw new NotImplementedException();
+            var tweets = TweetsApiService.GetTweets(userName);
+
+            if (!tweets.Any()) return 0;
+
+            tweets = tweets.OrderBy(tweet => tweet.CreatedAt.Date).ToList();
+
+            for (int i = 0; i < tweets.Count; i++)
+            {
+                if (i < tweets.Count - 1)
+                    tweets[i].DaysDiference = tweets[i + 1].CreatedAt.Subtract(tweets[i].CreatedAt).Days;
+                else
+                    tweets[i].DaysDiference = 0;
+            }
+
+            return tweets.Max(tweet => tweet.DaysDiference);
         }
 
         /**
@@ -98,12 +108,12 @@ namespace CodeScreen.Assessments.TweetsApi
             if (!tweets.Any()) return null;
 
             var messageWithHashtagsList = tweets.Where(tweet => tweet.Text.Contains('#')).ToList();
-            messageWithHashtagsList.ForEach(message => 
+            messageWithHashtagsList.ForEach(message =>
             {
                 var stringArr = message.Text.Split(' ');
                 foreach (var item in stringArr)
                 {
-                    if(item.Contains('#'))
+                    if (item.Contains('#'))
                         hashtagList.Add(item);
                 }
             });

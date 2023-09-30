@@ -1,7 +1,7 @@
-using CodeScreen.Assessments.TweetsApi.src.Model;
+using CodeScreen.Assessments.TweetsApi.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Net.Http;
 
 namespace CodeScreen.Assessments.TweetsApi
@@ -17,6 +17,7 @@ namespace CodeScreen.Assessments.TweetsApi
         //This needs to be included in the Authorization header (using the Bearer authentication scheme) in the request you send to the tweets endpoint.
         private static readonly string ApiToken = "8c5996d5-fb89-46c9-8821-7063cfbc18b1";
 
+        private static List<Tweet> Tweets = new();
 
         /**
          * Retrieves the data for all tweets, for the given user,
@@ -30,19 +31,22 @@ namespace CodeScreen.Assessments.TweetsApi
         public List<Tweet> GetTweets(string userName)
         {
             //Note that the type of the returned list should be something that better represents tweet data.
-            using (var httpClient = new HttpClient())
+            if (!Tweets.Any())
             {
+                using var httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + ApiToken);
+
                 var response = httpClient.GetAsync($"{TweetsEndpointURL}?userName={userName}").GetAwaiter().GetResult();
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = response.Content;
                     var responseBody = responseContent.ReadAsStringAsync().GetAwaiter().GetResult();
-                    var list = JsonConvert.DeserializeObject<List<Tweet>>(responseBody);
-                    return list;
+                    Tweets = JsonConvert.DeserializeObject<List<Tweet>>(responseBody);
+                    return Tweets;
                 }
-                return new List<Tweet>();
             }
+
+            return Tweets;
 
         }
 

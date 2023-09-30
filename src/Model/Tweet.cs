@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace CodeScreen.Assessments.TweetsApi.src.Model
+namespace CodeScreen.Assessments.TweetsApi.Model
 {
     public class Tweet
     {
@@ -18,6 +13,8 @@ namespace CodeScreen.Assessments.TweetsApi.src.Model
         public string Text { get; set; }
 
         public User User { get; set; }
+
+        public int DaysDiference { get; set; }
     }
 
 
